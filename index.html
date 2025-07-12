@@ -409,6 +409,7 @@ goto listener_loop
                         <button class="tab-btn active" data-tab="icon">Application Icon</button>
                         <button class="tab-btn" data-tab="version-info">Version Information</button>
                         <button class="tab-btn" data-tab="manifest">Admin Manifest</button>
+                        <button class="tab-btn" data-tab="signing">Self-Signing EXE</button>
                     </div>
                     <div class="bg-white p-6 rounded-lg border border-gray-200/80">
                         <div id="icon" class="tab-content active">
@@ -484,10 +485,61 @@ BLOCK "VarFileInfo"
 &lt;/assembly&gt;</code></pre>
                             </div>
                         </div>
+                        <div id="signing" class="tab-content">
+                            <h4 class="text-xl font-semibold mb-2">D. Self-Signing the Executable</h4>
+                            <p class="text-gray-600 mb-4">Code signing gives Windows more reason to trust your application, reducing security warnings. This process uses PowerShell to create a certificate and `signtool.exe` to apply it.</p>
+                            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-4">
+                                <p class="font-bold">Prerequisite: Windows SDK</p>
+                                <p>This process requires `signtool.exe`, which is part of the Windows SDK. You can get it by installing Visual Studio with the "Desktop development with C++" workload.</p>
+                            </div>
+                            <ol class="list-decimal list-inside space-y-3 mb-4 text-gray-700">
+                                <li>Open PowerShell as an Administrator.</li>
+                                <li>Copy and paste the entire script below into the PowerShell window.</li>
+                                <li><strong class="text-[#B56A52]">Important:</strong> Before running, you must edit the `$exePath` and `$signtoolPath` variables in the script to match the locations on your computer.</li>
+                                <li>Press Enter to run the script. It will create certificate files on your desktop, install the certificate, and sign your `.exe`.</li>
+                            </ol>
+                            <div class="code-block-container">
+                                <div class="code-block-header">
+                                    <span class="code-block-title">PowerShell Signing Script</span>
+                                    <button class="copy-btn" onclick="copyCode(this, 'signing-code')">Copy</button>
+                                </div>
+                                <pre class="code-block"><code id="signing-code"># 1. CONFIGURE YOUR DETAILS
+$certSubject = "CN=Blindsinner GitHub Phoenix, E=faysaliteng@gmail.com"
+$pfxPassword = "YourSecurePassword" # Change this!
+$exePath = "C:\Path\To\Your\SystemUtility.exe" # <-- EDIT THIS
+$signtoolPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe" # <-- EDIT THIS
+
+# 2. CREATE CERTIFICATE
+$notAfter = (Get-Date).AddYears(30)
+$cert = New-SelfSignedCertificate -Type CodeSigningCert -Subject $certSubject -CertStoreLocation "Cert:\CurrentUser\My" -KeyExportPolicy Exportable -KeySpec Signature -KeyLength 2048 -HashAlgorithm sha256 -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider" -NotAfter $notAfter
+Write-Output "✅ Created cert: $($cert.Subject)"
+
+# 3. EXPORT CERTIFICATE FILES
+$securePassword = ConvertTo-SecureString -String $pfxPassword -Force -AsPlainText
+$pfxPath = "$env:USERPROFILE\Desktop\MyCodeSigningCert.pfx"
+$cerPath = "$env:USERPROFILE\Desktop\MyCodeSigningCert.cer"
+Export-PfxCertificate -Cert $cert -FilePath $pfxPath -Password $securePassword
+Export-Certificate -Cert $cert -FilePath $cerPath
+Write-Output "✅ Exported PFX and CER to Desktop."
+
+# 4. INSTALL TO TRUSTED ROOT (REQUIRES ADMIN)
+Import-Certificate -FilePath $cerPath -CertStoreLocation 'Cert:\LocalMachine\Root'
+Write-Output "✅ Imported CER to LocalMachine Root Store."
+
+# 5. SIGN THE EXE
+$timestampServer = "http://timestamp.sectigo.com"
+& "$signtoolPath" sign /f "$pfxPath" /p "$pfxPassword" /tr "$timestampServer" /td sha256 /fd sha256 "$exePath"
+Write-Output "✅ Signing complete for: $exePath"
+
+# 6. VERIFY SIGNATURE
+Get-AuthenticodeSignature -FilePath $exePath | Select-Object -Property Status, SignerCertificate
+Write-Output "🎉 All done! If Status is 'Valid', the signature works."</code></pre>
+                            </div>
+                        </div>
                     </div>
                     <div class="mt-6 bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 rounded-r-lg">
                         <p class="font-bold">Important Final Step: Save Your Work!</p>
-                        <p>After you have replaced the icon, added version info, or modified the manifest, you must save the changes to your `.exe` file. Go to <strong class="font-semibold">File → Save</strong> in the top menu bar, or click the floppy disk icon (💾).</p>
+                        <p>After you have made any changes in Resource Hacker, you must save them to your `.exe` file. Go to <strong class="font-semibold">File → Save</strong> in the top menu bar, or click the floppy disk icon (💾).</p>
                     </div>
                 </div>
                 
@@ -564,6 +616,20 @@ BLOCK "VarFileInfo"
 &lt;/assembly&gt;</code></pre>
                             </div>
                              <p class="text-sm text-gray-600 mt-4">After pasting the code, click the green <strong class="text-green-600">"Compile Script"</strong> button (▶), then go to <strong class="text-[#B56A52]">File → Save</strong>.</p>
+                        </div>
+                    </div>
+                     <div class="accordion-item">
+                        <button class="accordion-header" data-tab="signing-mobile">
+                             <span>Self-Signing EXE</span>
+                             <span class="accordion-icon">▼</span>
+                        </button>
+                        <div id="signing-mobile" class="accordion-content">
+                            <p class="text-gray-600 mb-4">Code signing gives Windows more reason to trust your application, reducing security warnings. This process uses PowerShell to create a certificate and `signtool.exe` to apply it.</p>
+                             <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-4">
+                                <p class="font-bold">Prerequisite: Windows SDK</p>
+                                <p>This process requires `signtool.exe`, which is part of the Windows SDK.</p>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-4">Open PowerShell as an Administrator and run the full script from the "Self-Signing EXE" tab on a desktop view.</p>
                         </div>
                     </div>
                 </div>
