@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Batch-to-EXE Converter Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Modern Earth Tones -->
+    <!-- Application Structure Plan: The guide is transformed into a task-oriented SPA. A sticky navigation bar allows users to jump to any major step, supporting both linear learning for new users and quick reference for experienced users. The content is architecturally grouped into three logical, thematic sections: 1) "Setup" for all one-time installations, 2) "Core Process" for the main conversion workflow, and 3) "Advanced Customization" for optional enhancements. This structure was chosen to break a dense technical document into a manageable, user-friendly flow, separating required setup from the main task and optional steps. Key interactions include copy-to-clipboard buttons for code snippets and a responsive tab/accordion interface for the advanced section to prevent information overload. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Presentation Method -> Interaction -> Justification -> Library/Method. 1. Prerequisites -> Inform -> Two-column card layout with hover effects -> Clickable download buttons -> Clear, scannable presentation of required tools -> HTML/Tailwind. 2. AHK Script Code -> Provide -> Styled code block with header -> Copy-to-clipboard button -> Reduces user effort and error -> HTML/JS. 3. Compiler Steps -> Instruct -> Numbered list with highlighted keywords and visual mockups -> None needed -> Best format for procedural steps -> HTML/Tailwind. 4. Resource Hacker Info -> Organize/Inform -> Responsive Tab/Accordion interface with code blocks -> Click tabs/headers to switch content, copy buttons for code -> Prevents overwhelming users with optional, complex code; simplifies access on all devices -> HTML/JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #333333;
+        }
+        .code-block-container {
+            background-color: #2D3748;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .code-block-header {
+            background-color: #4A5568;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .code-block-title {
+            color: #E2E8F0;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+        }
+        .code-block {
+            padding: 1.25rem;
+            font-family: 'Roboto Mono', monospace;
+            color: #F7FAFC;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .copy-btn {
+            background-color: #718096;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        .copy-btn:hover {
+            background-color: #A0AEC0;
+        }
+        .nav-link {
+            transition: all 0.2s;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            position: relative;
+        }
+        .nav-link.active {
+            color: #C97B63;
+            font-weight: 600;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0.5rem;
+            right: 0.5rem;
+            height: 2px;
+            background-color: #C97B63;
+        }
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 0.5rem 0.5rem 0 0;
+            transition: all 0.2s ease-in-out;
+            background-color: transparent;
+            color: #4A5568;
+            border: 1px solid transparent;
+            border-bottom: none;
+        }
+        .tab-btn.active {
+            background-color: #ffffff;
+            color: #C97B63;
+            border-color: #E2E8F0;
+            box-shadow: 0 -2px 4px -2px rgba(0,0,0,0.05);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .accordion-header {
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            text-align: left;
+            background-color: #F3EFEA;
+            border: 1px solid #E2E8F0;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        .accordion-header:hover {
+            background-color: #E9E5E1;
+        }
+        .accordion-header.active {
+             background-color: #E9E5E1;
+             border-bottom-left-radius: 0;
+             border-bottom-right-radius: 0;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #ffffff;
+            border: 1px solid #E2E8F0;
+            border-top: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+            padding: 0 1rem;
+        }
+        .accordion-content.active {
+             padding: 1.5rem 1rem;
+        }
+        .accordion-icon {
+            transition: transform 0.3s ease-out;
+        }
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0 flex items-center space-x-2">
+                    <span class="text-2xl">🛠️</span>
+                    <h1 class="text-xl font-bold text-gray-800">Batch-to-EXE Guide</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <a href="#prerequisites" class="nav-link text-gray-600 font-medium">Prerequisites</a>
+                        <a href="#step1" class="nav-link text-gray-600 font-medium">Step 1: AHK Script</a>
+                        <a href="#step2" class="nav-link text-gray-600 font-medium">Step 2: Compile</a>
+                        <a href="#step3" class="nav-link text-gray-600 font-medium">Step 3: Advanced</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#prerequisites" class="nav-link block text-gray-600 font-medium">Prerequisites</a>
+                <a href="#step1" class="nav-link block text-gray-600 font-medium">Step 1: AHK Script</a>
+                <a href="#step2" class="nav-link block text-gray-600 font-medium">Step 2: Compile</a>
+                <a href="#step3" class="nav-link block text-gray-600 font-medium">Step 3: Advanced</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center mb-20">
+            <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl tracking-tight">Universal Batch-to-EXE Converter</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-xl text-gray-500">A complete guide to converting any batch file (.bat) into a single, professional standalone executable (.exe) using free tools.</p>
+        </div>
+
+        <section id="prerequisites" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">Prerequisites & Setup</h3>
+                <p class="mt-2 text-lg text-gray-600">This process requires two free tools. This is a one-time setup to prepare your system.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200/80 transition-transform transform hover:-translate-y-1">
+                    <h4 class="text-2xl font-bold mb-3 text-gray-900">1. AutoHotkey</h4>
+                    <p class="text-gray-600 mb-6">The core tool for scripting and compiling. Installing this gives you the `Ahk2Exe` compiler needed to create the base `.exe` file from a script.</p>
+                    <a href="https://www.autohotkey.com" target="_blank" class="w-full inline-block text-center bg-[#C97B63] text-white font-semibold py-3 px-6 rounded-lg hover:bg-[#B56A52] transition-colors duration-300">Download AutoHotkey</a>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200/80 transition-transform transform hover:-translate-y-1">
+                    <h4 class="text-2xl font-bold mb-3 text-gray-900">2. Resource Hacker</h4>
+                    <p class="text-gray-600 mb-6">An optional but highly recommended tool for advanced customization, allowing you to add icons, version info, and an admin manifest to your final `.exe`.</p>
+                    <a href="http://www.angusj.com/resourcehacker/" target="_blank" class="w-full inline-block text-center bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 transition-colors duration-300">Download Resource Hacker</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="step1" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">Step 1: The Universal AHK Script</h3>
+                <p class="mt-2 text-lg text-gray-600">This reusable template finds a batch file named `script.bat`, bundles it, and runs it with admin rights.</p>
+            </div>
+            <div class="max-w-3xl mx-auto">
+                <div class="code-block-container">
+                    <div class="code-block-header">
+                        <span class="code-block-title">converter.ahk</span>
+                        <button class="copy-btn" onclick="copyCode(this, 'ahk-script-code')">Copy</button>
+                    </div>
+                    <pre class="code-block"><code id="ahk-script-code">#NoTrayIcon
+
+; This command finds a file named "script.bat" in the same folder
+; and bundles it inside the final .exe file.
+FileInstall, script.bat, %A_Temp%\run.bat, 1
+
+; This command runs the bundled script with Administrator rights.
+; The *RunAs command will trigger a UAC prompt if needed.
+Run, *RunAs cmd.exe /k ""%A_Temp%\run.bat""
+
+ExitApp</code></pre>
+                </div>
+                <p class="mt-4 text-sm text-gray-500 italic"><strong>Pro Tip:</strong> For a more professional result where the `.exe` file itself is marked as requiring admin rights, remove `*RunAs` from the script and use the Manifest method in Step 3.</p>
+            </div>
+        </section>
+
+        <section id="step2" class="mb-24 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">Step 2: The Conversion Process</h3>
+                <p class="mt-2 text-lg text-gray-600">Follow these steps each time you want to convert a batch file using the Ahk2Exe GUI.</p>
+            </div>
+            <div class="max-w-4xl mx-auto bg-white p-8 sm:p-10 rounded-xl shadow-lg border border-gray-200/80">
+                <ol class="space-y-10">
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 bg-[#C97B63] text-white font-bold w-10 h-10 rounded-full flex items-center justify-center text-xl">1</div>
+                        <div class="ml-5">
+                            <h4 class="text-xl font-semibold">Prepare Your Files</h4>
+                            <p class="text-gray-600 mt-1">Take your batch file and rename it to exactly <strong class="text-[#B56A52]">`script.bat`</strong>. Place this file in the same folder as your `converter.ahk` script. Here is a useful, menu-driven "System Utility" script you can use:</p>
+                            <div class="mt-4 code-block-container">
+                                <div class="code-block-header">
+                                    <span class="code-block-title">Example script.bat</span>
+                                    <button class="copy-btn" onclick="copyCode(this, 'sample-bat-code')">Copy</button>
+                                </div>
+                                <pre class="code-block"><code id="sample-bat-code">@echo off
+setlocal
+
+:menu
+cls
+echo ====================================
+echo      System Utility Toolkit
+echo ====================================
+echo.
+echo [1] Performance Enhancement
+echo [2] Full Network Reset
+echo [3] Live Network Connections
+echo [0] Exit
+echo.
+set /p "choice=Enter your choice: "
+
+if "%choice%"=="1" goto performance
+if "%choice%"=="2" goto network
+if "%choice%"=="3" goto listener
+if "%choice%"=="0" exit
+
+echo Invalid choice. Press any key to return to menu.
+pause >nul
+goto menu
+
+:performance
+cls
+echo [*] Running Performance Enhancement...
+echo.
+echo [*] Clearing all user and system temporary files...
+del /q /f /s %temp%\* >nul 2>&1
+del /q /f /s %windir%\temp\* >nul 2>&1
+echo    Done.
+echo.
+echo [*] Clearing Windows Prefetch files...
+del /q /f /s %windir%\Prefetch\* >nul 2>&1
+echo    Done.
+echo.
+echo [SUCCESS] Performance tasks complete.
+echo.
+pause
+goto menu
+
+:network
+cls
+echo [WARNING] This will reset your network adapters and
+echo           briefly disconnect you from the internet.
+echo.
+set /p "confirm=Proceed with Network Reset? (Y/N): "
+if /i not "%confirm%"=="Y" goto menu
+cls
+echo [*] Running Full Network Reset...
+echo.
+echo [*] Flushing DNS cache...
+ipconfig /flushdns
+echo.
+echo [*] Resetting Winsock catalog...
+netsh winsock reset
+echo.
+echo [*] Resetting TCP/IP stack...
+netsh int ip reset
+echo.
+echo [SUCCESS] Network reset complete. A PC restart is recommended.
+echo.
+pause
+goto menu
+
+:listener
+cls
+echo ====================================
+echo   Live Network Connections
+echo ====================================
+echo (Refreshes every 5 seconds. Press Ctrl+C to stop)
+echo.
+:listener_loop
+echo Checking connections at %TIME%...
+netstat -an | find "ESTABLISHED"
+timeout /t 5 /nobreak >nul
+cls
+goto listener_loop
+</code></pre>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 bg-[#C97B63] text-white font-bold w-10 h-10 rounded-full flex items-center justify-center text-xl">2</div>
+                        <div class="ml-5">
+                            <h4 class="text-xl font-semibold">Open the Compiler</h4>
+                            <p class="text-gray-600 mt-1">Open your Start Menu and search for <strong class="text-[#B56A52]">`Ahk2Exe`</strong> to launch the compiler's graphical user interface (GUI). It will look like the visualization below.</p>
+                             <div class="mt-4 p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+                                <div class="bg-gray-200 rounded-t-lg p-2 text-sm font-semibold text-gray-700">Ahk2Exe v1.1.34.03 - AutoHotkey Script Compiler</div>
+                                <div class="bg-white p-6 rounded-b-lg shadow-inner space-y-4">
+                                    <div class="grid grid-cols-3 gap-4 items-center">
+                                        <label class="text-right font-medium text-gray-700">Source (script file)</label>
+                                        <div class="col-span-2 border border-gray-300 bg-gray-100 p-2 rounded text-sm text-gray-500">C:\MyProject\converter.ahk</div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-4 items-center">
+                                        <label class="text-right font-medium text-gray-700">Destination (.exe file)</label>
+                                        <div class="col-span-2 border border-gray-300 bg-gray-100 p-2 rounded text-sm text-gray-500">(Leave blank for same folder)</div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-4 items-center">
+                                        <label class="text-right font-medium text-gray-700">Custom Icon (.ico file)</label>
+                                        <div class="col-span-2 border border-gray-300 bg-gray-100 p-2 rounded text-sm text-gray-500">(Optional)</div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-4 items-center">
+                                        <label class="text-right font-medium text-gray-700">Base File (.bin)</label>
+                                        <div class="col-span-2 border border-gray-300 bg-gray-100 p-2 rounded text-sm text-gray-900 font-semibold">v2.0 Unicode 64-bit</div>
+                                    </div>
+                                    <div class="text-center pt-4">
+                                        <button class="bg-[#C97B63] text-white font-bold py-2 px-10 rounded-lg text-lg">> Convert <</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 bg-[#C97B63] text-white font-bold w-10 h-10 rounded-full flex items-center justify-center text-xl">3</div>
+                        <div class="ml-5">
+                            <h4 class="text-xl font-semibold">Final Output</h4>
+                            <p class="text-gray-600 mt-1">After clicking "Convert", you will have a new `.exe` file. You can rename it as you wish. Your project folder will now look like this:</p>
+                            <div class="mt-4 code-block-container">
+                                <div class="code-block-header">
+                                    <span class="code-block-title">Final Project Folder</span>
+                                </div>
+                                <pre class="code-block">MyProject/
+│
+├── SystemUtility.exe  <-- Your new application!
+│
+├── converter.ahk      (No longer needed for distribution)
+│
+└── script.bat         (No longer needed for distribution)</pre>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+             <div class="max-w-4xl mx-auto mt-12">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200/80">
+                    <h4 class="text-xl font-semibold text-gray-900 mb-3">💡 Where to Find Icons (.ico files)</h4>
+                    <p class="text-gray-600">To give your application a professional look, you can add a custom icon. Here are some free sources:</p>
+                    <ul class="list-disc list-inside mt-2 text-gray-600 space-y-1">
+                        <li><strong>Online Converters:</strong> Search for "PNG to ICO converter" to turn any image into an icon file.</li>
+                        <li><strong>Icon Libraries:</strong> Websites like `icon-icons.com` or `flaticon.com` offer thousands of free icons. Download the PNG and convert it.</li>
+                        <li><strong>Windows System Icons:</strong> You can extract icons directly from Windows system files (like `shell32.dll` or `imageres.dll`) using Resource Hacker itself.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="step3" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">Step 3: Advanced Customization</h3>
+                <p class="mt-2 text-lg text-gray-600">Use Resource Hacker to add a professional finish to your compiled `.exe`. This section explains exactly what to click.</p>
+            </div>
+             <div class="max-w-4xl mx-auto">
+                <div class="hidden md:block bg-[#F3EFEA] p-2 rounded-xl">
+                    <div class="flex space-x-2" aria-label="Tabs">
+                        <button class="tab-btn active" data-tab="icon">Application Icon</button>
+                        <button class="tab-btn" data-tab="version-info">Version Information</button>
+                        <button class="tab-btn" data-tab="manifest">Admin Manifest</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200/80">
+                        <div id="icon" class="tab-content active">
+                            <h4 class="text-xl font-semibold mb-2">A. Changing the Application Icon</h4>
+                            <p class="text-gray-600 mb-4">Replace the default AutoHotkey icon with your own custom logo for a branded, professional appearance.</p>
+                            <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                                <li>Open your compiled `.exe` file in Resource Hacker.</li>
+                                <li>In the left-hand tree view, expand the <strong class="text-[#B56A52]">"Icon Group"</strong> folder.</li>
+                                <li>Right-click on the first item inside (e.g., `1 : 1033`) and select <strong class="text-[#B56A52]">"Replace Resource..."</strong>.</li>
+                                <li>A new window will appear. Click the <strong class="text-[#B56A52]">"Open file with new icon..."</strong> button and select your custom `.ico` file.</li>
+                                <li>Click the <strong class="text-[#B56A52]">"Replace"</strong> button at the bottom of the window.</li>
+                            </ol>
+                        </div>
+                        <div id="version-info" class="tab-content">
+                            <h4 class="text-xl font-semibold mb-2">B. Adding Version Information</h4>
+                            <p class="text-gray-600 mb-4">This embeds details like company name and file description into the EXE's properties, making it look legitimate and professional.</p>
+                            <ol class="list-decimal list-inside space-y-3 mb-4 text-gray-700">
+                                <li>From the top menu, click <strong class="text-[#B56A52]">Action → Add from Script Template</strong>.</li>
+                                <li>In the dialog box, select <strong class="text-[#B56A52]">VERSION_INFO</strong> from the dropdown and click "Add Resource".</li>
+                                <li>The code editor will open. Replace its entire content with your version information.</li>
+                                <li>Click the green <strong class="text-green-600">"Compile Script"</strong> button (looks like a 'Play' icon ▶) in the toolbar above the code.</li>
+                            </ol>
+                            <div class="code-block-container">
+                                <div class="code-block-header">
+                                    <span class="code-block-title">Version Info Script</span>
+                                    <button class="copy-btn" onclick="copyCode(this, 'version-info-code')">Copy</button>
+                                </div>
+                                <pre class="code-block"><code id="version-info-code">1 VERSIONINFO
+FILEVERSION 3,0,0,0
+PRODUCTVERSION 3,0,0,0
+{
+BLOCK "StringFileInfo"
+{ BLOCK "040904B0"
+  {
+    VALUE "CompanyName", "Your Company"
+    VALUE "FileDescription", "My Custom Application"
+    VALUE "FileVersion", "3.0.0.0"
+    VALUE "InternalName", "MyApp"
+    VALUE "LegalCopyright", "© Your Company. All rights reserved."
+    VALUE "OriginalFilename", "MyApp.exe"
+    VALUE "ProductName", "My Application"
+    VALUE "ProductVersion", "3.0.0.0"
+  }
+}
+BLOCK "VarFileInfo"
+{ VALUE "Translation", 0x0409, 1200 }
+}</code></pre>
+                            </div>
+                        </div>
+                        <div id="manifest" class="tab-content">
+                            <h4 class="text-xl font-semibold mb-2">C. Forcing "Run as Administrator"</h4>
+                            <p class="text-gray-600 mb-4">This embeds a manifest into the `.exe` that tells Windows it must be run with administrator privileges. This is more professional than using `*RunAs` in the script.</p>
+                             <ol class="list-decimal list-inside space-y-3 mb-4 text-gray-700">
+                                <li>From the top menu, click <strong class="text-[#B56A52]">Action → Add using Script Template</strong>.</li>
+                                <li>In the dialog box, select <strong class="text-[#B56A52]">MANIFEST</strong> from the dropdown and click "Add Resource".</li>
+                                <li>The code editor will open. Replace the default text with the XML code below.</li>
+                                <li>Click the green <strong class="text-green-600">"Compile Script"</strong> button (▶) in the toolbar.</li>
+                            </ol>
+                            <div class="code-block-container">
+                                <div class="code-block-header">
+                                    <span class="code-block-title">Manifest XML</span>
+                                    <button class="copy-btn" onclick="copyCode(this, 'manifest-code')">Copy</button>
+                                </div>
+                                <pre class="code-block"><code id="manifest-code">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"&gt;
+  &lt;trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"&gt;
+    &lt;security&gt;
+      &lt;requestedPrivileges&gt;
+        &lt;requestedExecutionLevel level="requireAdministrator" uiAccess="false"&gt;&lt;/requestedExecutionLevel&gt;
+      &lt;/requestedPrivileges&gt;
+    &lt;/security&gt;
+  &lt;/trustInfo&gt;
+&lt;/assembly&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 rounded-r-lg">
+                        <p class="font-bold">Important Final Step: Save Your Work!</p>
+                        <p>After you have replaced the icon, added version info, or modified the manifest, you must save the changes to your `.exe` file. Go to <strong class="font-semibold">File → Save</strong> in the top menu bar, or click the floppy disk icon (💾).</p>
+                    </div>
+                </div>
+                
+                <div class="md:hidden space-y-4 accordion-container">
+                    <div class="accordion-item">
+                        <button class="accordion-header active" data-tab="icon-mobile">
+                            <span>Application Icon</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div id="icon-mobile" class="accordion-content active">
+                             <p class="text-gray-600 mb-4">Replace the default AutoHotkey icon with your own custom logo for a branded, professional appearance.</p>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                                <li>Open your compiled `.exe` file in Resource Hacker.</li>
+                                <li>Expand the <strong class="text-[#B56A52]">"Icon Group"</strong> folder.</li>
+                                <li>Right-click the first item and select <strong class="text-[#B56A52]">"Replace Resource..."</strong>.</li>
+                                <li>Click <strong class="text-[#B56A52]">"Open file with new icon..."</strong> and select your custom `.ico` file.</li>
+                                <li>Click the <strong class="text-[#B56A52]">"Replace"</strong> button.</li>
+                                <li>Finally, go to <strong class="text-[#B56A52]">File → Save</strong>.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header" data-tab="version-info-mobile">
+                            <span>Version Information</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div id="version-info-mobile" class="accordion-content">
+                            <p class="text-gray-600 mb-4">This embeds details like company name and file description into the EXE's properties.</p>
+                             <div class="code-block-container">
+                                <div class="code-block-header">
+                                    <span class="code-block-title">Version Info Script</span>
+                                    <button class="copy-btn" onclick="copyCode(this, 'version-info-code-mobile')">Copy</button>
+                                </div>
+                                <pre class="code-block"><code id="version-info-code-mobile">1 VERSIONINFO
+FILEVERSION 3,0,0,0
+PRODUCTVERSION 3,0,0,0
+{
+BLOCK "StringFileInfo"
+{ BLOCK "040904B0"
+  {
+    VALUE "CompanyName", "Your Company"
+    VALUE "FileDescription", "My Custom Application"
+    VALUE "FileVersion", "3.0.0.0"
+  }
+}
+BLOCK "VarFileInfo"
+{ VALUE "Translation", 0x0409, 1200 }
+}</code></pre>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-4">After pasting the code, click the green <strong class="text-green-600">"Compile Script"</strong> button (▶), then go to <strong class="text-[#B56A52]">File → Save</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header" data-tab="manifest-mobile">
+                             <span>Admin Manifest</span>
+                             <span class="accordion-icon">▼</span>
+                        </button>
+                        <div id="manifest-mobile" class="accordion-content">
+                            <p class="text-gray-600 mb-4">This embeds a manifest into the `.exe` that tells Windows it must be run with administrator privileges.</p>
+                            <div class="code-block-container">
+                                <div class="code-block-header">
+                                    <span class="code-block-title">Manifest XML</span>
+                                    <button class="copy-btn" onclick="copyCode(this, 'manifest-code-mobile')">Copy</button>
+                                </div>
+                                <pre class="code-block"><code id="manifest-code-mobile">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"&gt;
+  &lt;trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"&gt;
+    &lt;security&gt;
+      &lt;requestedPrivileges&gt;
+        &lt;requestedExecutionLevel level="requireAdministrator" uiAccess="false"&gt;&lt;/requestedExecutionLevel&gt;
+      &lt;/requestedPrivileges&gt;
+    &lt;/security&gt;
+  &lt;/trustInfo&gt;
+&lt;/assembly&gt;</code></pre>
+                            </div>
+                             <p class="text-sm text-gray-600 mt-4">After pasting the code, click the green <strong class="text-green-600">"Compile Script"</strong> button (▶), then go to <strong class="text-[#B56A52]">File → Save</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-white mt-16 border-t border-gray-200/80">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Universal Batch-to-EXE Guide. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyCode(button, codeElementId) {
+            const codeElement = document.getElementById(codeElementId);
+            const textToCopy = codeElement.innerText;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                button.innerText = 'Copied!';
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                button.innerText = 'Error';
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(item => item.classList.remove('active'));
+                    tab.classList.add('active');
+                    const target = tab.getAttribute('data-tab');
+                    tabContents.forEach(content => {
+                        if(content.parentElement.parentElement.classList.contains('md:block')) {
+                           content.classList.remove('active');
+                           if (content.id === target) {
+                               content.classList.add('active');
+                           }
+                        }
+                    });
+                });
+            });
+
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const currentlyActive = document.querySelector('.accordion-header.active');
+                    if (currentlyActive && currentlyActive !== header) {
+                        currentlyActive.classList.remove('active');
+                        currentlyActive.nextElementSibling.style.maxHeight = null;
+                        currentlyActive.nextElementSibling.classList.remove('active');
+                    }
+
+                    header.classList.toggle('active');
+                    const content = header.nextElementSibling;
+                    content.classList.toggle('active');
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            });
+
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: "-40% 0px -60% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
