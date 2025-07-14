@@ -8,10 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Modern Earth Tones -->
-    <!-- Application Structure Plan: The guide is transformed into a task-oriented SPA. A sticky navigation bar allows users to jump to any major step, supporting both linear learning for new users and quick reference for experienced users. The content is architecturally grouped into three logical, thematic sections: 1) "Setup" for all one-time installations, 2) "Core Process" for the main conversion workflow, and 3) "Advanced Customization" for optional enhancements. This structure was chosen to break a dense technical document into a manageable, user-friendly flow, separating required setup from the main task and optional steps. Key interactions include copy-to-clipboard buttons for code snippets and a responsive tab/accordion interface for the advanced section to prevent information overload. -->
-    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Presentation Method -> Interaction -> Justification -> Library/Method. 1. Prerequisites -> Inform -> Two-column card layout with hover effects -> Clickable download buttons -> Clear, scannable presentation of required tools -> HTML/Tailwind. 2. AHK Script Code -> Provide -> Styled code block with header -> Copy-to-clipboard button -> Reduces user effort and error -> HTML/JS. 3. Compiler Steps -> Instruct -> Numbered list with highlighted keywords and visual mockups -> None needed -> Best format for procedural steps -> HTML/Tailwind. 4. Resource Hacker Info -> Organize/Inform -> Responsive Tab/Accordion interface with code blocks -> Click tabs/headers to switch content, copy buttons for code -> Prevents overwhelming users with optional, complex code; simplifies access on all devices -> HTML/JS. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -141,6 +137,104 @@
         .accordion-header.active .accordion-icon {
             transform: rotate(180deg);
         }
+
+        /* Styles for Win32 UI Visualization */
+        .win32-window {
+            font-family: 'Tahoma', 'Segoe UI', sans-serif;
+            background-color: #f0f0f0;
+            border: 1px solid #a0a0a0;
+            border-radius: 0.25rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 12px;
+            color: #000;
+        }
+        .win32-titlebar {
+            background: linear-gradient(to bottom, #eff5fb 0%, #e1e9f4 100%);
+            padding: 4px 6px;
+            font-weight: bold;
+            color: #000;
+            border-bottom: 1px solid #a0a0a0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .win32-menu {
+            background-color: #f0f0f0;
+            padding: 3px 4px;
+            border-bottom: 1px solid #d0d0d0;
+        }
+        .win32-menu span {
+            margin-right: 12px;
+        }
+        .win32-content {
+            padding: 10px;
+        }
+        .win32-fieldset {
+            border: 1px solid #c0c0c0;
+            border-radius: 3px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .win32-legend {
+            font-weight: normal;
+            margin-left: 5px;
+            padding: 0 5px;
+        }
+        .win32-input {
+            border: 1px solid #7f9db9;
+            padding: 3px 4px;
+            width: 100%;
+            background-color: #fff;
+        }
+        .win32-button {
+            background-color: #f0f0f0;
+            border: 1px solid #a0a0a0;
+            border-radius: 3px;
+            padding: 4px 12px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+        }
+        .win32-button:hover {
+            border-color: #0078d7;
+            background-color: #e6f1fb;
+        }
+        .win32-key {
+            background-color: #f0f0f0;
+            border: 1px solid #a0a0a0;
+            border-radius: 4px;
+            box-shadow: inset 0 0 0 1px #fff, 0 2px 2px rgba(0,0,0,0.2);
+            padding: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+        .win32-toolbar {
+            background-color: #f0f0f0;
+            padding: 4px;
+            border-bottom: 1px solid #d0d0d0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .win32-toolbar-btn {
+            width: 24px;
+            height: 24px;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .win32-toolbar-btn:hover {
+            background-color: #e6f1fb;
+            border-color: #0078d7;
+        }
+        .win32-statusbar {
+            background-color: #f0f0f0;
+            padding: 3px 6px;
+            border-top: 1px solid #d0d0d0;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -255,7 +349,7 @@ setlocal
 :menu
 cls
 echo ====================================
-echo      System Utility Toolkit
+echo     System Utility Toolkit
 echo ====================================
 echo.
 echo [1] Performance Enhancement
@@ -281,11 +375,11 @@ echo.
 echo [*] Clearing all user and system temporary files...
 del /q /f /s %temp%\* >nul 2>&1
 del /q /f /s %windir%\temp\* >nul 2>&1
-echo    Done.
+echo   Done.
 echo.
 echo [*] Clearing Windows Prefetch files...
 del /q /f /s %windir%\Prefetch\* >nul 2>&1
-echo    Done.
+echo   Done.
 echo.
 echo [SUCCESS] Performance tasks complete.
 echo.
@@ -338,27 +432,91 @@ goto listener_loop
                         <div class="ml-5">
                             <h4 class="text-xl font-semibold">Open the Compiler</h4>
                             <p class="text-gray-600 mt-1">Open your Start Menu and search for <strong class="text-[#B56A52]">`Ahk2Exe`</strong> to launch the compiler's graphical user interface (GUI). It will look like the visualization below.</p>
-                             <div class="mt-4 p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
-                                <div class="bg-gray-200 rounded-t-lg p-2 text-sm font-semibold text-gray-700">Ahk2Exe v1.1.34.03 - AutoHotkey Script Compiler</div>
-                                <div class="bg-white p-6 rounded-b-lg shadow-inner space-y-4">
-                                    <div class="grid grid-cols-3 gap-4 items-center">
-                                        <label class="text-right font-medium text-gray-700">Source (script file)</label>
-                                        <div class="col-span-2 border border-gray-300 bg-gray-100 p-2 rounded text-sm text-gray-500">C:\MyProject\converter.ahk</div>
+                            <div class="mt-6 max-w-2xl mx-auto">
+                                <!-- Ahk2Exe Visualization -->
+                                <div class="win32-window">
+                                    <div class="win32-titlebar">
+                                        <span>Ahk2Exe for AutoHotkey v1.1.37.02 -- Script to EXE Converter</span>
+                                        <span>_ 🗗 X</span>
                                     </div>
-                                    <div class="grid grid-cols-3 gap-4 items-center">
-                                        <label class="text-right font-medium text-gray-700">Destination (.exe file)</label>
-                                        <div class="col-span-2 border border-gray-300 bg-gray-100 p-2 rounded text-sm text-gray-500">(Leave blank for same folder)</div>
+                                    <div class="win32-menu">
+                                        <span><u>F</u>ile</span>
+                                        <span><u>H</u>elp</span>
                                     </div>
-                                    <div class="grid grid-cols-3 gap-4 items-center">
-                                        <label class="text-right font-medium text-gray-700">Custom Icon (.ico file)</label>
-                                        <div class="col-span-2 border border-gray-300 bg-gray-100 p-2 rounded text-sm text-gray-500">(Optional)</div>
+                                    <div class="win32-content">
+                                        <div class="flex gap-4">
+                                            <div class="flex gap-2">
+                                                <div class="win32-key">A</div>
+                                                <div class="win32-key">H</div>
+                                                <div class="win32-key">K</div>
+                                            </div>
+                                            <div class="text-xs">
+                                                <p>©2004-2009 Chris Mallet</p>
+                                                <p>©2008-2011 Steve Gray (Lexikos)</p>
+                                                <p>©2011-2016 fincs</p>
+                                                <p>©2019-2025 TAC109</p>
+                                                <p class="text-blue-600 underline">https://www.autohotkey.com</p>
+                                                <p class="mt-2">Note: Compiling does not guarantee source code protection.</p>
+                                            </div>
+                                        </div>
+                                        <hr class="my-3 border-gray-400"/>
+                                        <fieldset class="win32-fieldset">
+                                            <legend class="win32-legend">Main Parameters</legend>
+                                            <div class="space-y-2 text-sm">
+                                                <div class="grid grid-cols-6 gap-2 items-center">
+                                                    <label class="col-span-1">Source</label>
+                                                    <input type="text" class="win32-input col-span-4" value="C:\MyProject\converter.ahk" disabled/>
+                                                    <button class="win32-button">Browse</button>
+                                                </div>
+                                                 <div class="grid grid-cols-6 gap-2 items-center">
+                                                    <label class="col-span-1">Destination</label>
+                                                    <input type="text" class="win32-input col-span-4" placeholder="C:\MyProject\converter.exe (same as source)" disabled/>
+                                                    <button class="win32-button">Default</button>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                         <fieldset class="win32-fieldset">
+                                            <legend class="win32-legend">Options</legend>
+                                            <div class="space-y-2 text-sm">
+                                                <div class="grid grid-cols-6 gap-2 items-center">
+                                                    <label class="col-span-1">Custom Icon</label>
+                                                    <input type="text" class="win32-input col-span-4" placeholder="Add later with Resource Hacker" disabled/>
+                                                    <button class="win32-button">Browse</button>
+                                                </div>
+                                                 <div class="grid grid-cols-6 gap-2 items-center">
+                                                    <label class="col-span-1">Base File</label>
+                                                    <select class="win32-input col-span-4" disabled>
+                                                        <option>v1.1.37.02 U64 Unicode 64-bit.bin</option>
+                                                        <option>v1.1.37.02 U32 Unicode 32-bit.bin</option>
+                                                        <option>v1.1.37.02 A32 ANSI 32-bit.bin</option>
+                                                    </select>
+                                                    <button class="win32-button">Browse</button>
+                                                </div>
+                                                <div class="grid grid-cols-6 gap-2 items-center">
+                                                    <label class="col-span-1">Compress Exe</label>
+                                                    <select class="win32-input col-span-2" disabled>
+                                                        <option>(none)</option>
+                                                    </select>
+                                                    <label class="col-span-2 text-right">Embedded Resource ID</label>
+                                                     <select class="win32-input col-span-1" disabled>
+                                                        <option>(default)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <div class="flex items-center justify-between mt-4">
+                                            <div>
+                                                <span>Convert to executable</span>
+                                                <button class="win32-button font-bold ml-2">Convert</button>
+                                            </div>
+                                            <div>
+                                                <span>Save 'Options' as default</span>
+                                                <button class="win32-button ml-2">Save</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="grid grid-cols-3 gap-4 items-center">
-                                        <label class="text-right font-medium text-gray-700">Base File (.bin)</label>
-                                        <div class="col-span-2 border border-gray-300 bg-gray-100 p-2 rounded text-sm text-gray-900 font-semibold">v2.0 Unicode 64-bit</div>
-                                    </div>
-                                    <div class="text-center pt-4">
-                                        <button class="bg-[#C97B63] text-white font-bold py-2 px-10 rounded-lg text-lg">> Convert <</button>
+                                     <div class="win32-statusbar">
+                                        Ready
                                     </div>
                                 </div>
                             </div>
@@ -403,6 +561,76 @@ goto listener_loop
                 <h3 class="text-3xl font-bold text-gray-800">Step 3: Advanced Customization</h3>
                 <p class="mt-2 text-lg text-gray-600">Use Resource Hacker to add a professional finish to your compiled `.exe`. This section explains exactly what to click.</p>
             </div>
+            
+            <!-- Resource Hacker Visualization -->
+            <div class="my-8 max-w-4xl mx-auto">
+                <div class="win32-window">
+                    <div class="win32-titlebar">
+                        <span>Resource Hacker - [ SystemUtility.exe ]</span>
+                        <span>_ 🗗 X</span>
+                    </div>
+                    <div class="win32-menu">
+                        <span><u>F</u>ile</span>
+                        <span><u>E</u>dit</span>
+                        <span><u>V</u>iew</span>
+                        <span><u>A</u>ction</span>
+                        <span><u>H</u>elp</span>
+                    </div>
+                    <div class="win32-toolbar">
+                        <div class="win32-toolbar-btn" title="Open">📂</div>
+                        <div class="win32-toolbar-btn" title="Save">💾</div>
+                        <div class="win32-toolbar-btn" title="Save As">💾</div>
+                        <div class="h-5 w-px bg-gray-400 mx-1"></div>
+                        <div class="win32-toolbar-btn" title="Cut">✂️</div>
+                        <div class="win32-toolbar-btn" title="Copy">📋</div>
+                        <div class="win32-toolbar-btn" title="Paste">📝</div>
+                        <div class="h-5 w-px bg-gray-400 mx-1"></div>
+                        <div class="win32-toolbar-btn" title="Find">🔍</div>
+                        <div class="win32-toolbar-btn" title="Add Resource">➕</div>
+                        <div class="win32-toolbar-btn" title="Compile Script">▶️</div>
+                        <div class="win32-toolbar-btn" title="About">ℹ️</div>
+                        <div class="win32-toolbar-btn" title="Exit">🚫</div>
+                    </div>
+                    <div class="win32-content flex" style="height: 300px;">
+                        <div class="w-1/3 border-r border-gray-400 pr-2 overflow-y-auto">
+                            <ul class="text-xs space-y-1">
+                                <li>
+                                    <span>▶ Icon Group</span>
+                                    <ul class="pl-4 hidden">
+                                        <li>1 : 1033</li>
+                                    </ul>
+                                </li>
+                                 <li>
+                                    <span>▶ Version Info</span>
+                                     <ul class="pl-4 hidden">
+                                        <li>1 : 1033</li>
+                                    </ul>
+                                </li>
+                                 <li>
+                                    <span>▶ Manifest</span>
+                                     <ul class="pl-4 hidden">
+                                        <li>1 : 1033</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span>▶ RCDATA</span>
+                                </li>
+                            </ul>
+                            <p class="mt-4 text-gray-500 text-center italic"> (Left-hand tree view appears here when you open a file) </p>
+                        </div>
+                        <div class="w-2/3 pl-2 flex flex-col">
+                            <div class="flex-grow bg-white border border-gray-500 p-2 font-mono text-xs">
+                                <p class="text-gray-500 italic">(The selected resource code, like the Version Info or Manifest script, will appear here for editing)</p>
+                            </div>
+                            <div class="text-xs border-t-0 border border-gray-400">
+                                <button class="px-3 py-1 bg-white border-r border-gray-400">Editor View</button>
+                                <button class="px-3 py-1">Binary View</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
              <div class="max-w-4xl mx-auto">
                 <div class="hidden md:block bg-[#F3EFEA] p-2 rounded-xl">
                     <div class="flex space-x-2" aria-label="Tabs">
@@ -490,7 +718,7 @@ BLOCK "VarFileInfo"
                             <p class="text-gray-600 mb-4">Code signing gives Windows more reason to trust your application, reducing security warnings. This process uses PowerShell to create a certificate and `signtool.exe` to apply it.</p>
                             <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-4">
                                 <p class="font-bold">Prerequisite: Windows SDK</p>
-                                <p>This process requires `signtool.exe`, which is part of the Windows SDK. You can get it by installing Visual Studio with the "Desktop development with C++" workload.</p>
+                                <p>This process requires `signtool.exe`, which is part of the <a href="https://go.microsoft.com/fwlink/?linkid=2320455" target="_blank" class="font-semibold underline hover:text-yellow-900">Windows SDK</a>. You can get it by installing Visual Studio with the "Desktop development with C++" workload.</p>
                             </div>
                             <ol class="list-decimal list-inside space-y-3 mb-4 text-gray-700">
                                 <li>Open PowerShell as an Administrator.</li>
@@ -627,7 +855,7 @@ BLOCK "VarFileInfo"
                             <p class="text-gray-600 mb-4">Code signing gives Windows more reason to trust your application, reducing security warnings. This process uses PowerShell to create a certificate and `signtool.exe` to apply it.</p>
                              <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-4">
                                 <p class="font-bold">Prerequisite: Windows SDK</p>
-                                <p>This process requires `signtool.exe`, which is part of the Windows SDK.</p>
+                                <p>This process requires `signtool.exe`, which is part of the <a href="https://go.microsoft.com/fwlink/?linkid=2320455" target="_blank" class="font-semibold underline hover:text-yellow-900">Windows SDK</a>.</p>
                             </div>
                             <p class="text-sm text-gray-600 mt-4">Open PowerShell as an Administrator and run the full script from the "Self-Signing EXE" tab on a desktop view.</p>
                         </div>
